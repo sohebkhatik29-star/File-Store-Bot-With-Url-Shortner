@@ -42,6 +42,20 @@ async def send_movie_card(bot: Client, user_id: int, movie_id: str, is_admin: bo
     card_buttons = build_final_movie_card_buttons(movie)
 
     poster = movie.get("poster_file_id")
+    if not poster and movie.get("qualities") and Config.DB_CHANNEL:
+        try:
+            from handlers.poster import extract_poster_from_message
+            first_q = list(movie["qualities"].values())[0]
+            channel_msg_id = first_q.get("channel_msg_id")
+            if channel_msg_id:
+                db_msg = await bot.get_messages(Config.DB_CHANNEL, channel_msg_id)
+                extracted_poster, _ = await extract_poster_from_message(bot, db_msg)
+                if extracted_poster:
+                    poster = extracted_poster
+                    await db.update_movie_poster(movie_id, poster, "on_demand_extract")
+        except Exception as e:
+            logger.debug(f"On-demand poster extraction in send_movie_card: {e}")
+
     if poster:
         try:
             await bot.send_photo(
