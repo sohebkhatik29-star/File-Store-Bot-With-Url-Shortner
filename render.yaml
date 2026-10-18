@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: ash-movie-store-bot
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT & python3 bot.py"
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: BOT_USERNAME
+        sync: false
+      - key: BOT_OWNER
+        sync: false
+      - key: DB_CHANNEL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_NAME
+        value: "moviefilterbot"
+      - key: LOG_CHANNEL
+        sync: false
+      - key: UPDATES_CHANNEL
+        sync: false
+      - key: SHORTLINK_URL
+        sync: false
+      - key: SHORTLINK_API
+        sync: false
